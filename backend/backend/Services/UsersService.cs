@@ -1,4 +1,6 @@
-﻿using Data;
+﻿using AutoMapper;
+using backend.Models;
+using Data;
 using Data.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -8,6 +10,7 @@ namespace backend.Services
     public class UsersService
     {
         private UsersContext _usersContext;
+        private readonly IMapper _mapper;
 
         public enum UserEntryResponse
         {
@@ -20,12 +23,13 @@ namespace backend.Services
             UsernameExists
         }
 
-        public UsersService(UsersContext usersContext)
+        public UsersService(UsersContext usersContext, IMapper mapper)
         {
             _usersContext = usersContext;
+            _mapper = mapper;
         }
 
-        public async Task<IEnumerable<User>> GetUsers(int page = 1, int perPage = 10, string orderBy = "", string orderType = "", string filterBy = "", string filterString = "")
+        public async Task<IEnumerable<UserResponse>> GetUsers(int page = 1, int perPage = 10, string orderBy = "", string orderType = "", string filterBy = "", string filterString = "")
         {
             var query = _usersContext.Users.AsQueryable();
 
@@ -53,15 +57,17 @@ namespace backend.Services
                 }
             }
 
-            return await query.Skip((page - 1) * perPage).Take(perPage).ToListAsync();
+            return await query.Skip((page - 1) * perPage).Take(perPage).Select(user => _mapper.Map<UserResponse>(user)).ToListAsync();
         }
 
-        public User? GetUserById(int id)
+        public UserResponse? GetUserById(int id)
         {
-            return _usersContext.Users.FirstOrDefault(s => s.UserId == id);
+            var user = _usersContext.Users.FirstOrDefault(s => s.UserId == id);
+
+            return _mapper.Map<UserResponse>(user);
         }
 
-        public (UserEntryResponse, User?) CreateUser(User user)
+        public (UserEntryResponse, UserResponse?) CreateUser(UserRequest user)
         {
             var _user = _usersContext.Users.FirstOrDefault(s => s.Email == user.Email || s.Username == user.Username);
 
@@ -78,10 +84,12 @@ namespace backend.Services
                 }
             }
 
-            _usersContext.Users.Add(user);
+            var newUser = _mapper.Map<User>(user);
+
+            _usersContext.Users.Add(newUser);
             _usersContext.SaveChanges();
 
-            return (UserEntryResponse.UsernameExists, user);
+            return (UserEntryResponse.UsernameExists, _mapper.Map<UserResponse>(newUser));
         }
 
         public UserEntryResponse DeleteUser(int id)
@@ -99,7 +107,7 @@ namespace backend.Services
             return UserEntryResponse.Deleted;
         }
 
-        public UserEntryResponse UpdateUser(int id, User value)
+        public UserEntryResponse UpdateUser(int id, UserRequest value)
         { 
             var user = _usersContext.Users.FirstOrDefault(s => s.UserId == id);
 
@@ -108,7 +116,7 @@ namespace backend.Services
                 return UserEntryResponse.NotFound;
             }
 
-            _usersContext.Entry<User>(user).CurrentValues.SetValues(value);
+            _usersContext.Entry(user).CurrentValues.SetValues(value);
             _usersContext.SaveChanges();
 
             return UserEntryResponse.Updated;

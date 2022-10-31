@@ -1,33 +1,31 @@
-﻿using backend.Services;
-using Data;
-using Data.Models;
+﻿using backend.Models;
+using backend.Services;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using static backend.Services.UsersService;
 
 namespace backend.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private UsersContext _usersContext;
-        private UsersService _usersService;
+        private readonly UsersService _usersService;
 
-        public UsersController(UsersContext usersContext, UsersService usersService)
+        public UsersController(UsersService usersService)
         {
-            _usersContext = usersContext;
             _usersService = usersService;
         }
 
         [HttpGet]
-        public async Task<IEnumerable<User>> Get(int page = 1, int perPage = 10, string? orderBy = "", string? orderType = "", string? filterBy = "", string? filter = "")
+        public async Task<IActionResult> GetAllUsers(int page = 1, int perPage = 10, string? orderBy = "", string? orderType = "", string? filterBy = "", string? filter = "")
         {
-            return await _usersService.GetUsers(page, perPage, orderBy, orderType, filterBy, filter);
+            var users = await _usersService.GetUsers(page, perPage, orderBy, orderType, filterBy, filter);
+
+            return Ok(new Response<IEnumerable<UserResponse>>() { Status = true, Data = users });
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult GetUserById(int id)
         {
             var user = _usersService.GetUserById(id);
 
@@ -36,28 +34,28 @@ namespace backend.Controllers
                 return NotFound();
             }
 
-            return Ok(user);
+            return Ok(new Response<UserResponse>() { Status = true, Data = user });
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] User value)
+        public IActionResult CreateUser([FromBody] UserRequest value)
         {
-            (UserEntryResponse response, User? user) = _usersService.CreateUser(value);
+            (UserEntryResponse response, UserResponse? user) = _usersService.CreateUser(value);
 
-            if(response == UserEntryResponse.Created)
+            if(response != UserEntryResponse.Created)
             {
                 return response switch
                 {
-                    UserEntryResponse.EmailExists => NotFound(),
-                    UserEntryResponse.UsernameExists => NotFound(),
+                    UserEntryResponse.EmailExists => Ok(new Response<string>() { Status = false, Data = "User With Same Email Exists!" }),
+                    UserEntryResponse.UsernameExists => Ok(new Response<string>() { Status = false, Data = "User With Same Username Exists!" }),
                 };
             }
 
-            return Ok(user);
+            return Ok(new Response<UserResponse>() { Status = true, Data = user });
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, [FromBody] User value)
+        public IActionResult UpdateUser(int id, [FromBody] UserRequest value)
         {
             var response = _usersService.UpdateUser(id, value);
 
@@ -70,7 +68,7 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteUser(int id)
         {
             var response = _usersService.DeleteUser(id);
 

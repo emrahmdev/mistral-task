@@ -264,3 +264,5 @@ C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\runtim
 C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\AutoMapper.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

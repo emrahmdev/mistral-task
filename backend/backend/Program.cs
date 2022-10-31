@@ -3,6 +3,7 @@ using Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Add services to the container.
 builder.Services.AddDbContext<UsersContext>(opts => opts.UseSqlServer(builder.Configuration["ConnectionStrings:UsersDB"]));

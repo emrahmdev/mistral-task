@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Data.Models
 {
-    public class User
+    public class User: BaseModel
     {
         public enum UserStatus
         {
@@ -20,5 +20,7 @@ namespace Data.Models
         public string Password { get; set; }
         public string Email { get; set; }
         public UserStatus Status { get; set; }
+
+        public ICollection<Permission> Permissions { get; set; }
     }
 }
