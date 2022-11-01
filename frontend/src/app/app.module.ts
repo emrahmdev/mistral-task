@@ -9,20 +9,25 @@ import { NewUserComponent } from './pages/new-user/new-user.component';
 import { EditUserComponent } from './pages/edit-user/edit-user.component';
 import { ComponentsModule } from './core/shared/components.module';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PermissionsComponent } from './pages/permissions/permissions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     UsersComponent,
     NewUserComponent,
-    EditUserComponent
+    EditUserComponent,
+    PermissionsComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     ComponentsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

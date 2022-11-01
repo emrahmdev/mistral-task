@@ -1,7 +1,11 @@
-﻿using backend.Models;
-using backend.Services;
+﻿using AutoMapper;
+using backend.Models;
+using Core.BindingModels;
+using Core.Dto;
+using Core.Models;
+using Core.Services;
 using Microsoft.AspNetCore.Mvc;
-using static backend.Services.UsersService;
+using static Core.Services.UsersService;
 
 namespace backend.Controllers
 {
@@ -10,10 +14,12 @@ namespace backend.Controllers
     public class UsersController : ControllerBase
     {
         private readonly UsersService _usersService;
+        private readonly IMapper _mapper;
 
-        public UsersController(UsersService usersService)
+        public UsersController(UsersService usersService, IMapper mapper)
         {
             _usersService = usersService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -21,7 +27,7 @@ namespace backend.Controllers
         {
             var users = await _usersService.GetUsers(page, perPage, orderBy, orderType, filterBy, filter);
 
-            return Ok(new Response<IEnumerable<UserResponse>>() { Status = true, Data = users });
+            return Ok(new Response<PaginatedResponse<UserDto>>() { Status = true, Data = users });
         }
 
         [HttpGet("{id}")]
@@ -29,20 +35,25 @@ namespace backend.Controllers
         {
             var user = _usersService.GetUserById(id);
 
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return Ok(new Response<UserResponse>() { Status = true, Data = user });
+            return Ok(new Response<UserDto>() { Status = true, Data = user });
         }
 
         [HttpPost]
-        public IActionResult CreateUser([FromBody] UserRequest value)
+        public IActionResult CreateUser([FromBody] CreateUserBindingModel value)
         {
-            (UserEntryResponse response, UserResponse? user) = _usersService.CreateUser(value);
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
 
-            if(response != UserEntryResponse.Created)
+            (UserEntryResponse response, UserDto? user) = _usersService.CreateUser(_mapper.Map<UserWithPasswordDto>(value));
+
+            if (response != UserEntryResponse.Created)
             {
                 return response switch
                 {
@@ -51,20 +62,30 @@ namespace backend.Controllers
                 };
             }
 
-            return Ok(new Response<UserResponse>() { Status = true, Data = user });
+            return Ok(new Response<UserDto>() { Status = true, Data = user });
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, [FromBody] UserRequest value)
+        public IActionResult UpdateUser(int id, [FromBody] UpdateUserBindingModel value)
         {
-            var response = _usersService.UpdateUser(id, value);
+            if (!ModelState.IsValid)
+            {
+                return UnprocessableEntity(ModelState);
+            }
+
+            var response = _usersService.UpdateUser(id, _mapper.Map<UserDto>(value));
 
             if (response == UserEntryResponse.NotFound)
             {
                 return NotFound();
             }
 
-            return Ok();
+            if (response == UserEntryResponse.EmailExists)
+            {
+                return Ok(new Response<string>() { Status = false, Data = "User With Same Email Exists!" });
+            }
+
+            return Ok(new Response<string>() { Status = true, Data = "Updated" });
         }
 
         [HttpDelete("{id}")]

@@ -1,1 +1,66 @@
-<p>new-user works!</p>
+<div class="form-wraper">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <mat-form-field  appearance="fill">
+            <mat-label>User Name</mat-label>
+            <input type="text" matInput formControlName="username" [errorStateMatcher]="errorMatcher">
+            <mat-error *ngIf="userNameControl?.hasError('required')">
+                Username is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field  appearance="fill">
+            <mat-label>Email</mat-label>
+            <input type="email" matInput formControlName="email" [errorStateMatcher]="errorMatcher">
+            <mat-error *ngIf="emailControl?.hasError('email') && !emailControl?.hasError('required')">
+                Please enter a valid email address
+            </mat-error>
+            <mat-error *ngIf="emailControl?.hasError('required')">
+                Email is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field  appearance="fill">
+            <mat-label>First Name</mat-label>
+            <input type="text" matInput formControlName="firstName" [errorStateMatcher]="errorMatcher">
+            <mat-error *ngIf="firstNameControl?.hasError('required')">
+                First Name is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field  appearance="fill">
+            <mat-label>Last Name</mat-label>
+            <input type="text" matInput formControlName="lastName" [errorStateMatcher]="errorMatcher">
+            <mat-error *ngIf="lastNameControl?.hasError('required')">
+                Last Name is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field  appearance="fill">
+            <mat-label>Password</mat-label>
+            <input type="password" matInput formControlName="password" [errorStateMatcher]="errorMatcher">
+            <mat-error *ngIf="passwordControl?.hasError('required')">
+                Passwordis <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="passwordControl?.hasError('minlength')">
+                Please choose a password with at least 8 characters
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field  appearance="fill">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="status" [errorStateMatcher]="errorMatcher">
+                <mat-option [value]="0">
+                    Inactive
+                </mat-option>
+                <mat-option [value]="1">
+                    Active
+                </mat-option>
+            </mat-select>
+            <mat-error *ngIf="statusControl?.hasError('required')">
+                You must make a selection
+            </mat-error>
+        </mat-form-field>
+
+        <button mat-raised-button type="submit" [disabled]="!userForm.valid">Create</button>
+    </form>
+</div>
