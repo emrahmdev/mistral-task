@@ -58,12 +58,12 @@ export class NewUserComponent implements OnInit {
 
         this._service.createUser(data).subscribe((response) => {
             if (response.status) {
-                this._snackBar.open('User created successfully', undefined, { duration: 5 });
+                this._snackBar.open('User created successfully', undefined, { duration: 5000 });
                 this._router.navigate(['/']);
                 return;
             }
 
-            this._snackBar.open(response.data as string, undefined, { duration: 5 });
+            this._snackBar.open(response.data as string, undefined, { duration: 5000 });
         })
     }
 }

@@ -7,7 +7,7 @@ namespace Data.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long PermisionId { get; set; }
+        public long PermissionId { get; set; }
         public string Name { get; set; }
 
         public ICollection<User> Users { get; set; }

@@ -24,11 +24,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Models.Permission", b =>
                 {
-                    b.Property<long>("PermisionId")
+                    b.Property<long>("PermissionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PermisionId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PermissionId"), 1L, 1);
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -43,7 +43,7 @@ namespace Data.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("PermisionId");
+                    b.HasKey("PermissionId");
 
                     b.ToTable("Permissions");
                 });
@@ -95,13 +95,13 @@ namespace Data.Migrations
 
             modelBuilder.Entity("PermissionUser", b =>
                 {
-                    b.Property<long>("PermissionsPermisionId")
+                    b.Property<long>("PermissionsPermissionId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("UsersUserId")
                         .HasColumnType("bigint");
 
-                    b.HasKey("PermissionsPermisionId", "UsersUserId");
+                    b.HasKey("PermissionsPermissionId", "UsersUserId");
 
                     b.HasIndex("UsersUserId");
 
@@ -112,7 +112,7 @@ namespace Data.Migrations
                 {
                     b.HasOne("Data.Models.Permission", null)
                         .WithMany()
-                        .HasForeignKey("PermissionsPermisionId")
+                        .HasForeignKey("PermissionsPermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -18,7 +18,6 @@ namespace Core.MappingProfiles
             CreateMap<UserDto, User>();
             CreateMap<User, UserDto>();
 
-            CreateMap<PermissionBindingModel, PermissionDto>();
             CreateMap<PermissionDto, Permission>();
             CreateMap<Permission, PermissionDto>();
 

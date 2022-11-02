@@ -7,25 +7,20 @@ services:
     volumes:
       - ./docker/nginx:/etc/nginx/conf.d
     ports:
-      - '80:80'
+      - '8080:80'
+    depends_on:
+      - web-api
+      - web-app
   web-api:
     build: ./backend/
-    ports:
-      - '80:80'
     depends_on:
-      - gateway
-      - sqldb
+      - sql_db
   web-app:
     build: ./frontend/
-    ports:
-      - '80:80'
     depends_on:
-      - gateway
       - web-api
-  sqldb:
-    image: mcr.microsoft.com/mssql/server:2017-latest
+  sql_db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
-    ports:
-      - '1433:1433'

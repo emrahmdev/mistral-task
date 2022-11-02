@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { BehaviorSubject, catchError, debounceTime, distinctUntilChanged, fromEvent, map, merge, Observable, of, startWith, Subject, switchMap } from 'rxjs';
-import { PaginatedResponse } from 'src/app/core/models/paginated_response.model';
+import { PaginatedResponse } from 'src/app/core/models/paginated-response.model';
 import { User } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { ModalComponent } from 'src/app/core/shared/components/modal/modal.component';
@@ -16,8 +16,8 @@ import { ModalComponent } from 'src/app/core/shared/components/modal/modal.compo
 })
 export class UsersComponent implements OnInit, AfterViewInit {
 
-    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator | undefined;
-    @ViewChild(MatSort, {static: false}) sort: MatSort | undefined;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | undefined;
+    @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
     @ViewChild('filterInput') filterInput: ElementRef | undefined;
 
     displayedColumns: string[] = ['username', 'firstName', 'lastName', 'email', 'status', 'edit', 'permissions', 'delete'];
@@ -62,6 +62,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
 
             merge(this.sort?.sortChange, this.paginator.page, this.selectedFilter$, filterText$, this.refreshData$)
                 .pipe(
+                    debounceTime(400),
                     startWith({}),
                     switchMap(() => {
                         this.isLoading = true;
@@ -79,7 +80,7 @@ export class UsersComponent implements OnInit, AfterViewInit {
                             return null;
                         }
 
-                        return response.data as any;
+                        return response.data as PaginatedResponse<User>;
                     })
                 )
                 .subscribe(data => {
@@ -101,16 +102,13 @@ export class UsersComponent implements OnInit, AfterViewInit {
             data: { message: 'Are you sure you want to delete this user' }
         }).afterClosed().subscribe(result => {
             if (result) {
-                this._service.deleteUser(userId).pipe(
-                    map(_ => true),
-                    catchError(() => of(false))
-                )
+                this._service.deleteUser(userId)
                     .subscribe((status: boolean) => {
                         if (!status) {
-                            this._snackBar.open('Failed to delete user', undefined, { duration: 5 });
+                            this._snackBar.open('Failed to delete user', undefined, { duration: 5000 });
                             return;
                         }
-                        this._snackBar.open('User deleted successfully', undefined, { duration: 5 });
+                        this._snackBar.open('User deleted successfully', undefined, { duration: 5000 });
                         this.refreshData.next();
                     })
             }

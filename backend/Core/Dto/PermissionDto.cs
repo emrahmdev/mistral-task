@@ -3,7 +3,7 @@ namespace Core.Dto
 {
     public class PermissionDto
     {
-        public long PermisionId { get; set; }
+        public long PermissionId { get; set; }
         public string Name { get; set; }
     }
 }

@@ -267,3 +267,14 @@ C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\obj\Debug\net6.0\refint
 C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\obj\Debug\net6.0\backend.pdb
 C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\obj\Debug\net6.0\backend.genruntimeconfig.cache
 C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\obj\Debug\net6.0\ref\backend.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Microsoft.Extensions.DependencyModel.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.AspNetCore.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Extensions.Hosting.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Extensions.Logging.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Formatting.Compact.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Settings.Configuration.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Sinks.Console.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Sinks.Debug.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\bin\Debug\net6.0\Serilog.Sinks.File.dll
+C:\Users\emrah\Desktop\repo\mistral-task\backend\backend\obj\Debug\net6.0\backend.MvcApplicationPartsAssemblyInfo.cs

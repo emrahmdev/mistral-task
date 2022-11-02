@@ -31,9 +31,9 @@ namespace backend.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        public async Task<IActionResult> GetUserById(int id)
         {
-            var user = _usersService.GetUserById(id);
+            var user = await _usersService.GetUserById(id);
 
             if (user == null)
             {
@@ -44,14 +44,14 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateUser([FromBody] CreateUserBindingModel value)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserBindingModel value)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            (UserEntryResponse response, UserDto? user) = _usersService.CreateUser(_mapper.Map<UserWithPasswordDto>(value));
+            (UserEntryResponse response, UserDto? user) = await _usersService.CreateUser(_mapper.Map<UserWithPasswordDto>(value));
 
             if (response != UserEntryResponse.Created)
             {
@@ -66,14 +66,14 @@ namespace backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateUser(int id, [FromBody] UpdateUserBindingModel value)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserBindingModel value)
         {
             if (!ModelState.IsValid)
             {
                 return UnprocessableEntity(ModelState);
             }
 
-            var response = _usersService.UpdateUser(id, _mapper.Map<UserDto>(value));
+            var response = await _usersService.UpdateUser(id, _mapper.Map<UserDto>(value));
 
             if (response == UserEntryResponse.NotFound)
             {
@@ -89,9 +89,9 @@ namespace backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            var response = _usersService.DeleteUser(id);
+            var response = await _usersService.DeleteUser(id);
 
             if (response == UserEntryResponse.NotFound)
             {

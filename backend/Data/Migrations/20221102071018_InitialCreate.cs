@@ -13,7 +13,7 @@ namespace Data.Migrations
                 name: "Permissions",
                 columns: table => new
                 {
-                    PermisionId = table.Column<long>(type: "bigint", nullable: false)
+                    PermissionId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -22,7 +22,7 @@ namespace Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Permissions", x => x.PermisionId);
+                    table.PrimaryKey("PK_Permissions", x => x.PermissionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,17 +50,17 @@ namespace Data.Migrations
                 name: "PermissionUser",
                 columns: table => new
                 {
-                    PermissionsPermisionId = table.Column<long>(type: "bigint", nullable: false),
+                    PermissionsPermissionId = table.Column<long>(type: "bigint", nullable: false),
                     UsersUserId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PermissionUser", x => new { x.PermissionsPermisionId, x.UsersUserId });
+                    table.PrimaryKey("PK_PermissionUser", x => new { x.PermissionsPermissionId, x.UsersUserId });
                     table.ForeignKey(
-                        name: "FK_PermissionUser_Permissions_PermissionsPermisionId",
-                        column: x => x.PermissionsPermisionId,
+                        name: "FK_PermissionUser_Permissions_PermissionsPermissionId",
+                        column: x => x.PermissionsPermissionId,
                         principalTable: "Permissions",
-                        principalColumn: "PermisionId",
+                        principalColumn: "PermissionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PermissionUser_Users_UsersUserId",

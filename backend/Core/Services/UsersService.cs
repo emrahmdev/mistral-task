@@ -36,25 +36,25 @@ namespace Core.Services
         {
             var query = _usersContext.Users.AsQueryable();
 
-            OrderUsersList(ref query, orderBy, orderType);
+            query = OrderUsersList(query, orderBy, orderType);
 
-            FilterUsersList(ref query, filterBy, filterString);
+            query = FilterUsersList(query, filterBy, filterString);
 
             var users = await PaginatedList<UserDto>.CreateAsync(query, page, perPage, user => _mapper.Map<UserDto>(user));
 
             return _mapper.Map<PaginatedResponse<UserDto>>(users);
         }
 
-        public UserDto? GetUserById(int id)
+        public async Task<UserDto?> GetUserById(int id)
         {
-            var user = _usersContext.Users.FirstOrDefault(s => s.UserId == id);
+            var user = await _usersContext.Users.FirstOrDefaultAsync(s => s.UserId == id);
 
             return _mapper.Map<UserDto>(user);
         }
 
-        public (UserEntryResponse, UserDto?) CreateUser(UserWithPasswordDto user)
+        public async Task<(UserEntryResponse, UserDto?)> CreateUser(UserWithPasswordDto user)
         {
-            var _user = _usersContext.Users.FirstOrDefault(s => s.Email == user.Email || s.Username == user.Username);
+            var _user = await _usersContext.Users.FirstOrDefaultAsync(s => s.Email == user.Email || s.Username == user.Username);
 
             if (_user != null)
             {
@@ -71,38 +71,38 @@ namespace Core.Services
 
             var newUser = _mapper.Map<User>(user);
 
-            _usersContext.Users.Add(newUser);
-            _usersContext.SaveChanges();
+            await _usersContext.Users.AddAsync(newUser);
+            await _usersContext.SaveChangesAsync();
 
             return (UserEntryResponse.Created, _mapper.Map<UserDto>(newUser));
         }
 
-       public UserEntryResponse DeleteUser(int id)
+       public async Task<UserEntryResponse> DeleteUser(int id)
         {
 
-            var user = _usersContext.Users.FirstOrDefault(s => s.UserId == id);
+            var user = await _usersContext.Users.FirstOrDefaultAsync(s => s.UserId == id);
 
             if (user == null)
             {
                 return UserEntryResponse.NotFound;
             }
 
-            _usersContext.Users.Remove(user);
-            _usersContext.SaveChanges();
+            user.IsDeleted = true;
+            await _usersContext.SaveChangesAsync();
 
             return UserEntryResponse.Deleted;
         }
         
-       public UserEntryResponse UpdateUser(int id, UserDto value)
+       public async Task<UserEntryResponse> UpdateUser(int id, UserDto value)
        {
-            var user = _usersContext.Users.FirstOrDefault(s => s.UserId == id);
+            var user = await _usersContext.Users.FirstOrDefaultAsync(s => s.UserId == id);
 
             if (user == null)
             {
                 return UserEntryResponse.NotFound;
             }
 
-            var _user = _usersContext.Users.FirstOrDefault(s => s.Email == value.Email && s.UserId != id);
+            var _user = await _usersContext.Users.FirstOrDefaultAsync(s => s.Email == value.Email && s.UserId != id);
 
             if (_user != null)
             {
@@ -114,22 +114,28 @@ namespace Core.Services
             user.Email = value.Email;
             user.Status = value.Status;
 
-           _usersContext.SaveChanges();
+           await _usersContext.SaveChangesAsync();
 
            return UserEntryResponse.Updated;
        }
 
-        private void OrderUsersList(ref IQueryable<User> query, string orderBy, string orderType)
+        private IQueryable<User> OrderUsersList(IQueryable<User> query, string orderBy, string orderType)
         {
-            if (string.IsNullOrEmpty(orderBy))
+            if (string.IsNullOrEmpty(orderBy) || string.IsNullOrEmpty(orderType))
             {
-                return;
+                return query;
             }
 
             if(orderBy == "status")
             {
-                query = query.OrderBy(u => u.Status);
-                return;
+                if (orderType == "asc")
+                {
+                    return query.OrderBy(u => u.Status);
+                }
+                else if (orderType == "desc")
+                {
+                    return query.OrderByDescending(u => u.Status);
+                }
             }
 
             var order = UsersOrder(orderBy);
@@ -142,21 +148,22 @@ namespace Core.Services
             {
                 query = query.OrderByDescending(order);
             }
+
+            return query;
         }
 
-        private void FilterUsersList(ref IQueryable<User> query, string filterBy, string filterString)
+        private IQueryable<User> FilterUsersList(IQueryable<User> query, string filterBy, string filterString)
         {
-            if (string.IsNullOrEmpty(filterBy))
+            if (string.IsNullOrEmpty(filterBy) || string.IsNullOrEmpty(filterString))
             {
-                return;
+                return query;
             }
 
             if (filterBy == "status")
             {
                 var status = (UserStatus)int.Parse(filterString);
 
-                query = query.Where(u => u.Status == status);
-                return;
+                return query.Where(u => u.Status == status);
             }
 
             var filter = UsersFilter(filterBy, filterString);
@@ -165,6 +172,8 @@ namespace Core.Services
             {
                 query = query.Where(filter);
             }
+
+            return query;
         }
 
         private Expression<Func<User, string>>? UsersOrder(string orderBy)

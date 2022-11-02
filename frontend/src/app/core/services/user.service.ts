@@ -1,10 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { PaginatedResponse } from '../models/paginated_response.model';
+import { catchError, map, Observable, of } from 'rxjs';
+import { PaginatedResponse } from '../models/paginated-response.model';
 import { User } from '../models/user.model';
 import { environment } from 'src/environments/environment';
-import { BaseResponse } from '../models/base_response.model';
+import { BaseResponse } from '../models/base-response.model';
+import { Permission } from '../models/permission.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -21,8 +22,11 @@ export class UserService {
         return this._http.get<BaseResponse<PaginatedResponse<User>>>(`${environment.baseUrl}/api/Users/GetAllUsers`, { params: queryParams });
     }
 
-    public deleteUser(userId: number) {
-        return this._http.delete(`${environment.baseUrl}/api/Users/DeleteUser/${userId}`);
+    public deleteUser(userId: number): Observable<boolean> {
+        return this._http.delete(`${environment.baseUrl}/api/Users/DeleteUser/${userId}`).pipe(
+            map(_ => true),
+            catchError(() => of(false))
+        );
     }
 
     public createUser(user: User): Observable<BaseResponse<User>> {
@@ -35,5 +39,45 @@ export class UserService {
 
     public updateUser(userId: number, user: User): Observable<BaseResponse<User>> {
         return this._http.put<BaseResponse<User>>(`${environment.baseUrl}/api/Users/UpdateUser/${userId}`, user);
+    }
+
+    public getAllPermissions(): Observable<Permission[]> {
+        return this._http.get<BaseResponse<Permission[]>>(`${environment.baseUrl}/api/Permissions/GetAllPermissions`).pipe(
+            map(response => {
+                if(!response.status) {
+                    return [];
+                }
+
+                return response.data as Permission[];
+            }),
+            catchError(() => of([]))
+        );
+    }
+
+    public getUserPermissions(userId: number): Observable<Permission[]> {
+        return this._http.get<BaseResponse<Permission[]>>(`${environment.baseUrl}/api/Permissions/GetUserPermissions/${userId}`).pipe(
+            map(response => {
+                if(!response.status) {
+                    return [];
+                }
+
+                return response.data as Permission[];
+            }),
+            catchError(() => of([]))
+        );
+    }
+
+    public assignUserPermission(userId: number, permissionId: number): Observable<boolean> {
+        return this._http.get(`${environment.baseUrl}/api/Permissions/AssignUserPermission/${userId}/${permissionId}`).pipe(
+            map(_ => true),
+            catchError(() => of(false))
+        );
+    }
+
+    public revokeUserPermission(userId: number, permissionId: number): Observable<boolean> {
+        return this._http.get(`${environment.baseUrl}/api/Permissions/RevokeUserPermission/${userId}/${permissionId}`).pipe(
+            map(_ => true),
+            catchError(() => of(false))
+        );
     }
 }

@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ModalComponent } from './components/modal/modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
     imports: [
@@ -24,7 +25,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
         MatButtonModule,
         MatIconModule,
         MatDialogModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatSlideToggleModule
     ],
     exports: [
         MatTableModule,
@@ -38,7 +40,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
         MatIconModule,
         ModalComponent,
         MatDialogModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatSlideToggleModule
     ],
     declarations: [
         ModalComponent
