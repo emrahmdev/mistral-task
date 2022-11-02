@@ -27,4 +27,4 @@ RUN apt-get -q update && apt-get -qy install netcat \
 RUN wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for -O wait-for
 RUN chmod +x wait-for
 
-ENTRYPOINT ["./wait-for","sql_db:1433","--","dotnet", "backend.dll"]
+ENTRYPOINT ["./wait-for","sql_db:1433", "-t", "20","--","dotnet", "backend.dll"]
